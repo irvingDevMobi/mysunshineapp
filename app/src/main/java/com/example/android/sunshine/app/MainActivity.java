@@ -50,6 +50,14 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        String [] forecastList = {
+                "Today - Sunny - 30/35",
+                "Tomorrow - Foggy - 5/15",
+                "Weds - Cloudy - 12/25",
+                "Thurs - Cloudy - 12/25",
+                "Fri - Cloudy - 12/25",
+                "Sat - Cloudy - 12/25"};
+
         public PlaceholderFragment() {
         }
 
