@@ -1,6 +1,7 @@
 package com.example.android.sunshine.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -41,8 +43,8 @@ public class ForecastFragment extends Fragment {
 
     public static String LOG_TAG = "LOG_ForecastFragment";
 
-    public ArrayAdapter<String> arrayAdapter;
-    public ListView listView;
+    private ArrayAdapter<String> arrayAdapter;
+    private ListView listView;
 
 
     public ForecastFragment() {
@@ -65,11 +67,19 @@ public class ForecastFragment extends Fragment {
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-
             new FetchWeatherTask().execute("94043");
         } else {
             Toast.makeText(getActivity(), "No internet Connection", Toast.LENGTH_SHORT).show();
         }
+
+        // clicks
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), DetailActivity.class);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
@@ -227,8 +237,9 @@ public class ForecastFragment extends Fragment {
                     arrayAdapter = new ArrayAdapter<>(getActivity(),
                                                       R.layout.list_item_forecast,
                                                       R.id.list_item_forecast_textview,
-                                                      /* We need to use ArrayList, because when we call
-                                                         arrayAdapter.clear() the app does not crash
+                                                      /* We need to use ArrayList, because when we
+                                                         call arrayAdapter.clear() the app crash if
+                                                         we use a simple array
                                                       */
                                                       new ArrayList<>(Arrays.asList(result)));
 
