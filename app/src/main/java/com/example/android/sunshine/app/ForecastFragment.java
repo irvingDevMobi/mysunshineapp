@@ -30,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -221,11 +222,24 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] result) {
             Log.d("LOG", Arrays.toString(result));
-            arrayAdapter = new ArrayAdapter<>(getActivity(),
-                                              R.layout.list_item_forecast,
-                                              R.id.list_item_forecast_textview,
-                                              result);
-            listView.setAdapter(arrayAdapter);
+            if (result != null) {
+                if (arrayAdapter == null) {
+                    arrayAdapter = new ArrayAdapter<>(getActivity(),
+                                                      R.layout.list_item_forecast,
+                                                      R.id.list_item_forecast_textview,
+                                                      /* We need to use ArrayList, because when we call
+                                                         arrayAdapter.clear() the app does not crash
+                                                      */
+                                                      new ArrayList<>(Arrays.asList(result)));
+
+                    listView.setAdapter(arrayAdapter);
+                } else {
+                    arrayAdapter.clear();
+                    for (String string : result) {
+                        arrayAdapter.add(string);
+                    }
+                }
+            }
         }
     }
 
