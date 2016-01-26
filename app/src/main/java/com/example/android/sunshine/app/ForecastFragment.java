@@ -40,13 +40,9 @@ public class ForecastFragment extends Fragment {
 
     public static String LOG_TAG = "LOG_ForecastFragment";
 
-    public static String[] forecastList = {
-                                    "Today - Sunny - 30/35",
-                                    "Tomorrow - Foggy - 5/15",
-                                    "Weds - Cloudy - 12/25",
-                                    "Thurs - Cloudy - 12/25",
-                                    "Fri - Cloudy - 12/25",
-                                    "Sat - Cloudy - 12/25"};
+    public ArrayAdapter<String> arrayAdapter;
+    public ListView listView;
+
 
     public ForecastFragment() {
     }
@@ -61,18 +57,14 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        listView = (ListView) rootView.findViewById(R.id.listview_forecast);
 
         // Checking connection
         ConnectivityManager connManager =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),
-                                                                   R.layout.list_item_forecast,
-                                                                   R.id.list_item_forecast_textview,
-                                                                   forecastList);
-            listView.setAdapter(arrayAdapter);
+
             new FetchWeatherTask().execute("94043");
         } else {
             Toast.makeText(getActivity(), "No internet Connection", Toast.LENGTH_SHORT).show();
@@ -101,7 +93,7 @@ public class ForecastFragment extends Fragment {
     // has been established, the AsyncTask downloads the contents of the webpage as
     // an InputStream. Finally, the InputStream is converted into a string, which is
     // displayed in the UI by the AsyncTask's onPostExecute method.
-    private static class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+    private class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
         int numDays = 7;
 
@@ -229,6 +221,11 @@ public class ForecastFragment extends Fragment {
         @Override
         protected void onPostExecute(String[] result) {
             Log.d("LOG", Arrays.toString(result));
+            arrayAdapter = new ArrayAdapter<>(getActivity(),
+                                              R.layout.list_item_forecast,
+                                              R.id.list_item_forecast_textview,
+                                              result);
+            listView.setAdapter(arrayAdapter);
         }
     }
 
