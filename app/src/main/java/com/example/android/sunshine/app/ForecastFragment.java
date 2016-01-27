@@ -97,6 +97,8 @@ public class ForecastFragment extends Fragment {
         if (idItem == R.id.action_refresh) {
             new FetchWeatherTask().execute("94043");
             return true;
+        } else if (idItem == R.id.action_settings) {
+            startActivity(new Intent(getActivity(), SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
