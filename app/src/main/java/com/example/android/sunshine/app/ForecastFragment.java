@@ -42,6 +42,7 @@ import java.util.Arrays;
 public class ForecastFragment extends Fragment {
 
     public static String LOG_TAG = "LOG_ForecastFragment";
+    public static String EXTRA_DETAIL = "extraDetail";
 
     private ArrayAdapter<String> arrayAdapter;
     private ListView listView;
@@ -77,6 +78,7 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), DetailActivity.class);
+                intent.putExtra(EXTRA_DETAIL, arrayAdapter.getItem(position));
                 startActivity(intent);
             }
         });
