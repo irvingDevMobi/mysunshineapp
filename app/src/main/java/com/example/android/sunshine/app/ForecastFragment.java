@@ -2,11 +2,14 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.text.format.Time;
 import android.util.Log;
@@ -67,9 +70,7 @@ public class ForecastFragment extends Fragment {
         ConnectivityManager connManager =
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            new FetchWeatherTask().execute("94043");
-        } else {
+        if (networkInfo == null || !networkInfo.isConnected()) {
             Toast.makeText(getActivity(), "No internet Connection", Toast.LENGTH_SHORT).show();
         }
 
@@ -87,6 +88,12 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
     }
@@ -95,12 +102,19 @@ public class ForecastFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int idItem = item.getItemId();
         if (idItem == R.id.action_refresh) {
-            new FetchWeatherTask().execute("94043");
+            updateWeather();
             return true;
         } else if (idItem == R.id.action_settings) {
             startActivity(new Intent(getActivity(), SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void updateWeather() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String postalCode = preferences.getString(getString(R.string.pref_location_key),
+                                                  getString(R.string.pref_location_default));
+        new FetchWeatherTask().execute(postalCode);
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
