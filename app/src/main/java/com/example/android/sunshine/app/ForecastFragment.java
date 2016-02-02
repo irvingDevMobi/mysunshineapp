@@ -106,8 +106,24 @@ public class ForecastFragment extends Fragment {
             return true;
         } else if (idItem == R.id.action_settings) {
             startActivity(new Intent(getActivity(), SettingsActivity.class));
+        } else if (idItem == R.id.action_show_map) {
+            openMapFromPrefeences();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openMapFromPrefeences() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String postalCode = preferences.getString(getString(R.string.pref_location_key),
+                                                  getString(R.string.pref_location_default));
+
+        Uri geoPoint = Uri.parse("geo:0,0?").buildUpon()
+            .appendQueryParameter("q", postalCode).build();
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, geoPoint);
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     private void updateWeather() {
