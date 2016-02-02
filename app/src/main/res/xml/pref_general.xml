@@ -3,7 +3,14 @@
     <EditTextPreference
         android:title="@string/location_label"
         android:key="@string/pref_location_key"
-        android:defaultValue="94043"
+        android:defaultValue="@string/pref_location_default"
         android:inputType="text"
+        />
+    <ListPreference
+        android:key="@string/pref_temp_key"
+        android:title="@string/temperature_label"
+        android:entries="@array/pref_temp_entries"
+        android:entryValues="@array/pref_temp_values"
+        android:defaultValue="@string/metric_label"
         />
 </PreferenceScreen>

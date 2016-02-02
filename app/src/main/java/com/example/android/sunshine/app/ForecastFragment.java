@@ -114,7 +114,9 @@ public class ForecastFragment extends Fragment {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String postalCode = preferences.getString(getString(R.string.pref_location_key),
                                                   getString(R.string.pref_location_default));
-        new FetchWeatherTask().execute(postalCode);
+        String units = preferences.getString(getString(R.string.pref_temp_key),
+                                             getString(R.string.metric_label));
+        new FetchWeatherTask().execute(postalCode, units);
     }
 
     // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -225,15 +227,20 @@ public class ForecastFragment extends Fragment {
         }
 
 
+        /**
+         * The order for the params are PostalCode, Units
+         * @param params from the preferences values
+         * @return json with data from the server
+         */
         @Override
-        protected String[] doInBackground(String... postalCodes) {
+        protected String[] doInBackground(String... params) {
             Uri.Builder builder = new Uri.Builder();
             builder.scheme("http")
                 .authority("api.openweathermap.org")
                 .appendPath("data").appendPath("2.5").appendPath("forecast").appendPath("daily")
-                .appendQueryParameter("q", postalCodes[0])
+                .appendQueryParameter("q", params[0])
                 .appendQueryParameter("mode", "json")
-                .appendQueryParameter("units", "metric")
+                .appendQueryParameter("units", params[1])
                 .appendQueryParameter("cnt", Integer.toString(numDays))
                 .appendQueryParameter("appid", "3df8033d0723263baf582b04c6735f20");
 
