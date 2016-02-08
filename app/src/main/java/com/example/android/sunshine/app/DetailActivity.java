@@ -2,7 +2,9 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -10,6 +12,8 @@ import android.widget.TextView;
 
 public class DetailActivity extends ActionBarActivity {
 
+    private ShareActionProvider mShareActionProvider;
+    private TextView mTextView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,14 +21,17 @@ public class DetailActivity extends ActionBarActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String detail = getIntent().getStringExtra(ForecastFragment.EXTRA_DETAIL);
-        TextView textView = (TextView) findViewById(R.id.detail_tv);
-        textView.setText(detail);
+        mTextView = (TextView) findViewById(R.id.detail_tv);
+        mTextView.setText(detail);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.deatail, menu);
+        MenuItem item = menu.findItem(R.id.action_share);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        shareText();
         return true;
     }
 
@@ -35,5 +42,14 @@ public class DetailActivity extends ActionBarActivity {
             startActivity(new Intent(this, SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void shareText() {
+        if (mShareActionProvider != null) {
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/*");
+            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText().toString());
+            mShareActionProvider.setShareIntent(intent);
+        }
     }
 }
