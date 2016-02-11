@@ -48,7 +48,8 @@ public class DetailActivity extends ActionBarActivity {
         if (mShareActionProvider != null) {
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/*");
-            intent.putExtra(Intent.EXTRA_TEXT, mTextView.getText().toString());
+            String message = mTextView.getText().toString() + " #SunshineApp";
+            intent.putExtra(Intent.EXTRA_TEXT, message);
             mShareActionProvider.setShareIntent(intent);
         }
     }
