@@ -3,7 +3,6 @@ package com.example.android.sunshine.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -131,7 +130,7 @@ public class ForecastFragment extends Fragment {
         String postalCode = preferences.getString(getString(R.string.pref_location_key),
                                                   getString(R.string.pref_location_default));
         String units = preferences.getString(getString(R.string.pref_temp_key),
-                                             getString(R.string.metric_label));
+                                             getString(R.string.temp_metric_label));
         new FetchWeatherTask().execute(postalCode, units);
     }
 

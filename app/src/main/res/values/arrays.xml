@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="pref_temp_entries">
-        <item>@string/metric_label</item>
-        <item>Imperial</item>
+        <item>@string/temp_metric_label</item>
+        <item>@string/temp_imperial_label</item>
     </string-array>
     <string-array name="pref_temp_values">
         <item>@string/pref_temp_metric_key</item>
-        <item>imperial</item>
+        <item>@string/pref_temp_imperial_key</item>
     </string-array>
 </resources>
