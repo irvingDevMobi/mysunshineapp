@@ -72,15 +72,15 @@ public class WeatherProvider extends ContentProvider {
     private Cursor getLocationSetting(String[] projection, String selection, String sortOrder) {
 
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
-        return database.query(WeatherContract.LocationEntry.TABLE_NAME, projection, null, null,
+        return database.query(WeatherContract.LocationEntry.TABLE_NAME, projection, selection, null,
                               null, null, sortOrder);
     }
 
     private Cursor getWeather(String[] projection, String selection, String sortOrder) {
 
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
-        return database.query(WeatherContract.WeatherEntry.TABLE_NAME, projection, null, null, null,
-                              null, sortOrder);
+        return database.query(WeatherContract.WeatherEntry.TABLE_NAME, projection, selection, null,
+                              null, null, sortOrder);
     }
 
     private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
@@ -241,6 +241,16 @@ public class WeatherProvider extends ContentProvider {
                     returnUri = WeatherContract.WeatherEntry.buildWeatherUri(_id);
                 else
                     throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case LOCATION : {
+                long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
+                if (_id > 0) {
+                    returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+                }
+                else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
                 break;
             }
             default:
