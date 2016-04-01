@@ -15,9 +15,11 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -25,6 +27,7 @@ import android.text.format.Time;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
 import org.json.JSONArray;
@@ -100,15 +103,39 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
      *
      * @param locationSetting The location string used to request updates from the server.
      * @param cityName A human-readable city name, e.g "Mountain View"
-     * @param lat the latitude of the city
-     * @param lon the longitude of the city
+     * @param latitude the latitude of the city
+     * @param longitude the longitude of the city
      * @return the row ID of the added location.
      */
-    long addLocation(String locationSetting, String cityName, double lat, double lon) {
+    long addLocation(String locationSetting, String cityName, double latitude, double longitude) {
         // Students: First, check if the location with this city name exists in the db
-        // If it exists, return the current ID
-        // Otherwise, insert it using the content resolver and the base URI
-        return -1;
+        long locationId;
+        String where = WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = '" + locationSetting + "'";
+//        String where = WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?";
+        String [] parametersWhere = new String[]{locationSetting};
+        Cursor locationCursor = mContext.getContentResolver().query(
+            WeatherContract.LocationEntry.CONTENT_URI,
+            new String[] {WeatherContract.LocationEntry._ID},
+            where,
+//            parametersWhere, null
+            null, null
+            );
+        if (locationCursor != null && locationCursor.moveToFirst()) {
+            int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
+            locationId = locationCursor.getLong(locationIdIndex);
+            locationCursor.close();
+        } else {
+            // Otherwise, insert it using the content resolver and the base URI
+            ContentValues values = new ContentValues();
+            values.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
+            values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
+            values.put(WeatherContract.LocationEntry.COLUMN_LATITUDE, latitude);
+            values.put(WeatherContract.LocationEntry.COLUMN_LONGITUDE, longitude);
+            Uri insertedUri = mContext.getContentResolver()
+                .insert(WeatherContract.LocationEntry.CONTENT_URI, values);
+            locationId = ContentUris.parseId(insertedUri);
+        }
+        return locationId;
     }
 
     /*
@@ -189,7 +216,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+            Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
             // OWM returns daily forecasts based upon the local time of the city that is being
             // asked for, which means that we need to know the GMT offset to translate this data
