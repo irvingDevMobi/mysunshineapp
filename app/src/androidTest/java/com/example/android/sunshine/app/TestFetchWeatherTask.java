@@ -75,7 +75,7 @@ public class TestFetchWeatherTask extends AndroidTestCase{
                 assertEquals("Error: the queried value of latitude is incorrect",
                         locationCursor.getDouble(3), ADD_LOCATION_LAT);
                 assertEquals("Error: the queried value of longitude is incorrect",
-                        locationCursor.getDouble(4), ADD_LOCATION_LON);
+                             locationCursor.getDouble(4), ADD_LOCATION_LON);
             } else {
                 fail("Error: the id you used to query returned an empty cursor");
             }
