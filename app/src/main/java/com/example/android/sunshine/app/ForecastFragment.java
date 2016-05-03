@@ -38,7 +38,6 @@ public class ForecastFragment extends Fragment {
     public static String EXTRA_DETAIL = "extraDetail";
 
     private ArrayAdapter<String> arrayAdapter;
-    private ListView listView;
 
 
     public ForecastFragment() {
@@ -54,9 +53,10 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast,
                                           R.id.list_item_forecast_textview);
+        listView.setAdapter(arrayAdapter);
 
         // Checking connection
         ConnectivityManager connManager =
@@ -115,6 +115,8 @@ public class ForecastFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, geoPoint);
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivity(intent);
+        } else {
+            Log.d(LOG_TAG, "Couldn't call " + postalCode + ", no receiving apps installed!");
         }
     }
 
@@ -124,7 +126,7 @@ public class ForecastFragment extends Fragment {
                                                   getString(R.string.pref_location_default));
         String units = preferences.getString(getString(R.string.pref_temp_key),
                                              getString(R.string.temp_metric_label));
-        new FetchWeatherTask(getActivity(), arrayAdapter);
+        new FetchWeatherTask(getActivity(), arrayAdapter).execute(postalCode);
     }
 
 //    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
