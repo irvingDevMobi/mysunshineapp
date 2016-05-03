@@ -16,6 +16,7 @@
 package com.example.android.sunshine.app;
 
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
 import android.database.Cursor;
 import android.test.AndroidTestCase;
 
@@ -65,7 +66,7 @@ public class TestFetchWeatherTask extends AndroidTestCase{
              null);
 
             // these match the indices of the projection
-            if (locationCursor.moveToFirst()) {
+            if (locationCursor != null && locationCursor.moveToFirst()) {
                 assertEquals("Error: the queried value of locationId does not match the returned value" +
                               "from addLocation", locationCursor.getLong(0), locationId);
                 assertEquals("Error: the queried value of location setting is incorrect",
@@ -90,15 +91,17 @@ public class TestFetchWeatherTask extends AndroidTestCase{
 
             assertEquals("Error: inserting a location again should return the same ID",
              locationId, newLocationId);
+
+            locationCursor.close();
         }
         // reset our state back to normal
-        getContext().getContentResolver().delete(WeatherContract.LocationEntry.CONTENT_URI,
+        ContentResolver contentResolver = getContext().getContentResolver();
+        contentResolver.delete(WeatherContract.LocationEntry.CONTENT_URI,
          WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?",
          new String[]{ADD_LOCATION_SETTING});
 
         // clean up the test so that other tests can use the content provider
-        getContext().getContentResolver().
-                                          acquireContentProviderClient(WeatherContract.LocationEntry.CONTENT_URI).
-                                                                                                                  getLocalContentProvider().shutdown();
+        contentResolver.acquireContentProviderClient(WeatherContract.LocationEntry.CONTENT_URI)
+         .getLocalContentProvider().shutdown();
     }
 }

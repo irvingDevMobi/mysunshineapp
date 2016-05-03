@@ -56,8 +56,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         mForecastAdapter = forecastAdapter;
     }
 
-    private boolean DEBUG = true;
-
     /* The date/time conversion code is going to be moved outside the asynctask later,
      * so for convenience we're breaking it out into its own method now.
      */
@@ -66,7 +64,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         // it must be converted to milliseconds in order to be converted to valid date.
         Date date = new Date(time);
         SimpleDateFormat format = new SimpleDateFormat("E, MMM d");
-        return format.format(date).toString();
+        return format.format(date);
     }
 
     /**
@@ -95,8 +93,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
-        String highLowStr = roundedHigh + "/" + roundedLow;
-        return highLowStr;
+        return roundedHigh + "/" + roundedLow;
     }
 
     /**
@@ -119,9 +116,10 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
          new String[]{locationSetting},
          null);
 
-        if (locationCursor.moveToFirst()) {
+        if (locationCursor != null && locationCursor.moveToFirst()) {
             int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
             locationId = locationCursor.getLong(locationIdIndex);
+            locationCursor.close();
         } else {
             // Now that the content provider is set up, inserting rows of data is pretty simple.
             // First create a ContentValues object to hold the data you want to insert.
@@ -144,7 +142,6 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             locationId = ContentUris.parseId(insertedUri);
         }
 
-        locationCursor.close();
         // Wait, that worked?  Yes!
         return locationId;
     }
@@ -227,7 +224,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+            Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
             // OWM returns daily forecasts based upon the local time of the city that is being
             // asked for, which means that we need to know the GMT offset to translate this data
@@ -326,8 +323,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
             Log.d(LOG_TAG, "FetchWeatherTask Complete. " + cVVector.size() + " Inserted");
 
-            String[] resultStrs = convertContentValuesToUXFormat(cVVector);
-            return resultStrs;
+            return convertContentValuesToUXFormat(cVVector);
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
@@ -386,7 +382,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
             // Read the input stream into a String
             InputStream inputStream = urlConnection.getInputStream();
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             if (inputStream == null) {
                 // Nothing to do.
                 return null;
@@ -398,7 +394,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                 // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                 // But it does make debugging a *lot* easier if you print out the completed
                 // buffer for debugging.
-                buffer.append(line + "\n");
+                buffer.append(line).append("\n");
             }
 
             if (buffer.length() == 0) {

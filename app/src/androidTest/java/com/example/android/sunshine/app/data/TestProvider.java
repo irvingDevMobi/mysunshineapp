@@ -189,7 +189,7 @@ public class TestProvider extends AndroidTestCase {
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
+//        ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
         long locationRowId = TestUtilities.insertNorthPoleLocationValues(mContext);
 
         // Fantastic.  Now that we have a location, add some weather!
@@ -220,11 +220,11 @@ public class TestProvider extends AndroidTestCase {
      */
     public void testBasicLocationQueries() {
         // insert our test records into the database
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+//        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
+//        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues testValues = TestUtilities.createNorthPoleLocationValues();
-        long locationRowId = TestUtilities.insertNorthPoleLocationValues(mContext);
+//        long locationRowId = TestUtilities.insertNorthPoleLocationValues(mContext);
 
         // Test the basic content provider query
         Cursor locationCursor = mContext.getContentResolver().query(
@@ -270,6 +270,7 @@ public class TestProvider extends AndroidTestCase {
         // the observers as expected
         Cursor locationCursor = mContext.getContentResolver().query(LocationEntry.CONTENT_URI, null, null, null, null);
 
+        assertNotNull(locationCursor);
         TestUtilities.TestContentObserver tco = TestUtilities.getTestContentObserver();
         locationCursor.registerContentObserver(tco);
 
@@ -296,6 +297,7 @@ public class TestProvider extends AndroidTestCase {
                 null    // sort order
         );
 
+        assertNotNull(cursor);
         TestUtilities.validateCursor("testUpdateLocation.  Error validating location entry update.",
                 cursor, updatedValues);
 
