@@ -69,18 +69,20 @@ public class WeatherProvider extends ContentProvider {
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
                     WeatherContract.WeatherEntry.COLUMN_DATE + " = ? ";
 
-    private Cursor getLocationSetting(String[] projection, String selection, String sortOrder) {
+    private Cursor getLocationSetting(String[] projection, String selection, String sortOrder,
+                                      String [] selectionArgs) {
 
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
-        return database.query(WeatherContract.LocationEntry.TABLE_NAME, projection, selection, null,
-                              null, null, sortOrder);
+        return database.query(WeatherContract.LocationEntry.TABLE_NAME, projection, selection,
+                              selectionArgs, null, null, sortOrder);
     }
 
-    private Cursor getWeather(String[] projection, String selection, String sortOrder) {
+    private Cursor getWeather(String[] projection, String selection, String sortOrder,
+                              String [] selectionArgs) {
 
         SQLiteDatabase database = mOpenHelper.getReadableDatabase();
-        return database.query(WeatherContract.WeatherEntry.TABLE_NAME, projection, selection, null,
-                              null, null, sortOrder);
+        return database.query(WeatherContract.WeatherEntry.TABLE_NAME, projection, selection,
+                              selectionArgs, null, null, sortOrder);
     }
 
     private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
@@ -204,12 +206,12 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor = getWeather(projection, selection, sortOrder);
+                retCursor = getWeather(projection, selection, sortOrder, selectionArgs);
                 break;
             }
             // "location"
             case LOCATION: {
-                retCursor = getLocationSetting(projection, selection, sortOrder);
+                retCursor = getLocationSetting(projection, selection, sortOrder, selectionArgs);
                 break;
             }
 
