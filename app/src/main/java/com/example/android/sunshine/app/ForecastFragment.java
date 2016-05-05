@@ -1,10 +1,8 @@
 package com.example.android.sunshine.app;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,10 +14,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+
+import com.example.android.sunshine.app.data.WeatherContract;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,7 +35,7 @@ public class ForecastFragment extends Fragment {
     public static String LOG_TAG = "LOG_ForecastFragment";
     public static String EXTRA_DETAIL = "extraDetail";
 
-    private ArrayAdapter<String> arrayAdapter;
+    private ForecastAdapter forecastAdapter;
 
 
     public ForecastFragment() {
@@ -54,27 +52,28 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.list_item_forecast,
-                                          R.id.list_item_forecast_textview);
-        listView.setAdapter(arrayAdapter);
+
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+
+        // Sort order: Ascending by date
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                                    locationSetting, System.currentTimeMillis());
+
+        Cursor cursor = getActivity().getContentResolver().query(weatherForLocationUri, null, null,
+                                                                 null, sortOrder);
+
+        forecastAdapter = new ForecastAdapter(getActivity(), cursor, 0);
+        listView.setAdapter(forecastAdapter);
 
         // Checking connection
-        ConnectivityManager connManager =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnected()) {
-            Toast.makeText(getActivity(), "No internet Connection", Toast.LENGTH_SHORT).show();
-        }
+//        ConnectivityManager connManager =
+//                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+//        if (networkInfo == null || !networkInfo.isConnected()) {
+//            Toast.makeText(getActivity(), "No internet Connection", Toast.LENGTH_SHORT).show();
+//        }
 
-        // clicks
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), DetailActivity.class);
-                intent.putExtra(EXTRA_DETAIL, arrayAdapter.getItem(position));
-                startActivity(intent);
-            }
-        });
 
         return rootView;
     }
@@ -104,10 +103,9 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void openMapFromPreferences() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String postalCode = preferences.getString(getString(R.string.pref_location_key),
-                                                  getString(R.string.pref_location_default));
+    private void openMapFromPreferences()
+    {
+        String postalCode = Utility.getPreferredLocation(getActivity());
 
         Uri geoPoint = Uri.parse("geo:0,0?").buildUpon()
             .appendQueryParameter("q", postalCode).build();
@@ -121,12 +119,13 @@ public class ForecastFragment extends Fragment {
     }
 
     private void updateWeather() {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String postalCode = preferences.getString(getString(R.string.pref_location_key),
-                                                  getString(R.string.pref_location_default));
-        String units = preferences.getString(getString(R.string.pref_temp_key),
-                                             getString(R.string.temp_metric_label));
-        new FetchWeatherTask(getActivity(), arrayAdapter).execute(postalCode);
+//        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+//        String postalCode = preferences.getString(getString(R.string.pref_location_key),
+//                                                  getString(R.string.pref_location_default));
+//        String units = preferences.getString(getString(R.string.pref_temp_key),
+//                                             getString(R.string.temp_metric_label));
+        String location = Utility.getPreferredLocation(getActivity());
+        new FetchWeatherTask(getActivity()).execute(location);
     }
 
 //    // Uses AsyncTask to create a task away from the main UI thread. This task takes a
@@ -268,21 +267,21 @@ public class ForecastFragment extends Fragment {
 //        protected void onPostExecute(String[] result) {
 //            Log.d("LOG", Arrays.toString(result));
 //            if (result != null) {
-//                if (arrayAdapter == null) {
-//                    arrayAdapter = new ArrayAdapter<>(getActivity(),
+//                if (forecastAdapter == null) {
+//                    forecastAdapter = new ArrayAdapter<>(getActivity(),
 //                                                      R.layout.list_item_forecast,
 //                                                      R.id.list_item_forecast_textview,
 //                                                      /* We need to use ArrayList, because when we
-//                                                         call arrayAdapter.clear() the app crash if
+//                                                         call forecastAdapter.clear() the app crash if
 //                                                         we use a simple array
 //                                                      */
 //                                                      new ArrayList<>(Arrays.asList(result)));
 //
-//                    listView.setAdapter(arrayAdapter);
+//                    listView.setAdapter(forecastAdapter);
 //                } else {
-//                    arrayAdapter.clear();
+//                    forecastAdapter.clear();
 //                    for (String string : result) {
-//                        arrayAdapter.add(string);
+//                        forecastAdapter.add(string);
 //                    }
 //                }
 //            }
