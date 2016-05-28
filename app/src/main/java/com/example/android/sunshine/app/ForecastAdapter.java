@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.sunshine.app.data.WeatherContract;
-
 /**
  * {@link ForecastAdapter} exposes a list of weather forecasts
  * from a {@link android.database.Cursor} to a {@link android.widget.ListView}.
@@ -34,11 +32,11 @@ public class ForecastAdapter extends CursorAdapter {
     private String convertCursorRowToUXFormat(Cursor cursor) {
 
         String highAndLow = formatHighLows(
-            cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP),
-            cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP));
+            cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP),
+            cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP));
 
-        return Utility.formatDate(cursor.getLong(ForecastFragment.COL_WEATHER_DATE)) +
-                " - " + cursor.getString(ForecastFragment.COL_WEATHER_DESC) +
+        return Utility.formatDate(cursor.getLong(Utility.COL_WEATHER_DATE)) +
+                " - " + cursor.getString(Utility.COL_WEATHER_DESC) +
                 " - " + highAndLow;
     }
 
