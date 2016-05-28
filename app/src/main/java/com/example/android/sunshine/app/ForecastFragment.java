@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.android.sunshine.app.data.WeatherContract;
@@ -72,6 +73,21 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         forecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         listView.setAdapter(forecastAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                // CursorAdapter returns a cursor at the correct position for getItem(), or null
+                // if it cannot seek to that position.
+                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                if (cursor != null) {
+                    String locationSetting = Utility.getPreferredLocation(getActivity());
+                    Uri uri = WeatherContract.WeatherEntry.buildWeatherLocationWithDate(
+                        locationSetting, cursor.getLong(COL_WEATHER_DATE));
+                    Intent intent = new Intent(getActivity(), DetailActivity.class).setData(uri);
+                    startActivity(intent);
+                }
+            }
+        });
         // Checking connection
 //        ConnectivityManager connManager =
 //                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
