@@ -2,22 +2,25 @@ package com.example.android.sunshine.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 
-public class DetailActivity extends ActionBarActivity{
+public class DetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            String query = intent.getDataString();
-            DetailFragment fragment = DetailFragment.newInstance(query);
-            getSupportFragmentManager().beginTransaction().add(R.id.detail_container,
-                                                               fragment).commit();
+        if (savedInstanceState == null) {
+            Intent intent = getIntent();
+            if (intent != null) {
+                String query = intent.getDataString();
+                DetailFragment fragment = DetailFragment.newInstance(query);
+                getSupportFragmentManager().beginTransaction().add(R.id.detail_container, fragment).commit();
+            }
         }
     }
 
