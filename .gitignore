@@ -42,5 +42,7 @@ LICENSE
 build/
 gradle
 gradlew
+gradlew/
 gradlew.bat
 gradle.properties
+projectFilesBackup/
