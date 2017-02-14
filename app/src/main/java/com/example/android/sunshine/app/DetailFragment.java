@@ -74,6 +74,13 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     }
 
     @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        getLoaderManager().initLoader(LOADER_ID_DA, null, this);
+
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.deatail, menu);
         MenuItem item = menu.findItem(R.id.action_share);
@@ -104,13 +111,6 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(), Uri.parse(queryUri), Utility.FORECAST_COLUMNS, null,
                                 null, null);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID_DA, null, this);
-
     }
 
     @Override

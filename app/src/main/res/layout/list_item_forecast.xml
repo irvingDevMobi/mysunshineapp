@@ -1,10 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/list_item_forecast_textview"
-    tools:text="Today - Sunny "
     android:minHeight="?android:attr/listPreferredItemHeight"
-    android:gravity="center_vertical"
+    android:layout_margin="@dimen/activity_horizontal_margin"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/list_item_icon"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/gral_cell_padding"
+        android:layout_width="wrap_content"
+        android:src="@mipmap/ic_launcher"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/gral_cell_padding"
+        android:layout_marginLeft="@dimen/gral_cell_padding"
+        android:layout_gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/list_item_date_textview"
+            tools:text="Today"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+
+        <TextView
+            android:id="@+id/list_item_forecast_textview"
+            tools:text="Clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical"
+        android:gravity="end"
+        android:layout_margin="@dimen/gral_cell_padding"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content">
+
+        <TextView
+            android:id="@+id/list_item_high_textview"
+            tools:text="21°"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/list_item_low_textview"
+            tools:text="8°"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>
