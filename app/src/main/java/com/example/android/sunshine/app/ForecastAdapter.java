@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -58,7 +59,31 @@ public class ForecastAdapter extends CursorAdapter {
         // our view is pretty simple here --- just a text view
         // we'll keep the UI functional with a simple (and slow!) binding.
 
-//        TextView tv = (TextView)view;
-//        tv.setText(convertCursorRowToUXFormat(cursor));
+
+        // Read weather icon ID from cursor
+        int weatherId = cursor.getInt(Utility.COL_WEATHER_ID);
+        // Use placeholder image for now
+        ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
+        iconView.setImageResource(R.drawable.ic_launcher);
+
+        long date = cursor.getLong(Utility.COL_WEATHER_DATE);
+        TextView dateTextView = (TextView) view.findViewById(R.id.list_item_date_textview);
+        dateTextView.setText(Utility.getFriendlyDayString(context, date));
+
+        String forecast = cursor.getString(Utility.COL_WEATHER_DESC);
+        TextView forecastTextView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+        forecastTextView.setText(forecast);
+
+        // Read user preference for metric or imperial temperature units
+        boolean isMetric = Utility.isMetric(context);
+
+        // Read high temperature from cursor
+        double high = cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP);
+        TextView highView = (TextView) view.findViewById(R.id.list_item_high_textview);
+        highView.setText(Utility.formatTemperature(high, isMetric));
+
+        double low = cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP);
+        TextView lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
+        lowView.setText(Utility.formatTemperature(low, isMetric));
     }
 }
