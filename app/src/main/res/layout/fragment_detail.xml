@@ -1,16 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/detail_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/gral_cell_padding"
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
-</RelativeLayout>
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gral_cell_padding"
+            android:layout_width="match_parent"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="vertical">
+
+                <TextView
+                    tools:text="Today Jan 20"
+                    android:id="@+id/detail_date_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <TextView
+                    tools:text="21°"
+                    android:id="@+id/detail_high_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+                <TextView
+                    tools:text="6°"
+                    android:id="@+id/detail_low_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/detail_icon"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/ic_launcher"/>
+
+                <TextView
+                    tools:text="Sunday"
+                    android:id="@+id/detail_forecast_textview"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            tools:text="HUMIDITY: 84%"
+            android:id="@+id/detail_humidity_textview"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gral_cell_padding"
+            android:layout_width="wrap_content"/>
+        <TextView
+            tools:text="WIND: 6 Km/H NW"
+            android:id="@+id/detail_wind_textview"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/gral_cell_padding"
+            android:layout_marginStart="@dimen/gral_cell_padding"
+            android:layout_width="wrap_content"/>
+        <TextView
+            tools:text="PRESSURE 1014 hPS"
+            android:id="@+id/detail_pressure_textview"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/gral_cell_padding"
+            android:layout_width="wrap_content"/>
+    </LinearLayout>
+</ScrollView>

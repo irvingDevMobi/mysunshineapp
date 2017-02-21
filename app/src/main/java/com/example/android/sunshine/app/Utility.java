@@ -174,4 +174,21 @@ public class Utility {
         String monthDayString = monthDayFormat.format(dateInMillis);
         return monthDayString;
     }
+
+    public static String getFormattedWind(Context context, float windSpeed, float degrees) {
+        int windFormat;
+        if (Utility.isMetric(context)) {
+            windFormat = R.string.format_wind_kmh;
+        } else {
+            windFormat = R.string.format_wind_mph;
+            windSpeed = .621371192237334f * windSpeed;
+        }
+        String direction = getWindDirection(degrees);
+        return String.format(context.getString(windFormat), windSpeed, direction);
+    }
+
+    private static String getWindDirection(float degrees) {
+        String[] directions = new String[] {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
+        return directions[(int) Math.round(degrees / 45) % 8];
+    }
 }
