@@ -117,9 +117,9 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         if (data.moveToFirst()) {
             boolean isMetric = Utility.isMetric(getActivity());
-            String low = Utility.formatTemperature(data.getDouble(Utility.COL_WEATHER_MIN_TEMP),
+            String low = Utility.formatTemperature(getActivity(), data.getDouble(Utility.COL_WEATHER_MIN_TEMP),
                                                    isMetric);
-            String high = Utility.formatTemperature(data.getDouble(Utility.COL_WEATHER_MAX_TEMP),
+            String high = Utility.formatTemperature(getActivity(), data.getDouble(Utility.COL_WEATHER_MAX_TEMP),
                                                     isMetric);
             String stringBuilder = Utility.formatDate(data.getLong(Utility.COL_WEATHER_DATE)) +
                                     " - " + data.getString(Utility.COL_WEATHER_DESC) +

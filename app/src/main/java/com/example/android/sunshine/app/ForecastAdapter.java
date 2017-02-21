@@ -23,28 +23,28 @@ public class ForecastAdapter extends CursorAdapter {
         super(context, c, flags);
     }
 
-    /**
-     * Prepare the weather high/lows for presentation.
-     */
-    private String formatHighLows(double high, double low) {
-        boolean isMetric = Utility.isMetric(mContext);
-        return Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
-    }
-
-    /*
-        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
-        string.
-     */
-    private String convertCursorRowToUXFormat(Cursor cursor) {
-
-        String highAndLow = formatHighLows(
-            cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP),
-            cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP));
-
-        return Utility.formatDate(cursor.getLong(Utility.COL_WEATHER_DATE)) +
-                " - " + cursor.getString(Utility.COL_WEATHER_DESC) +
-                " - " + highAndLow;
-    }
+//    /**
+//     * Prepare the weather high/lows for presentation.
+//     */
+//    private String formatHighLows(double high, double low) {
+//        boolean isMetric = Utility.isMetric(mContext);
+//        return Utility.formatTemperature(high, isMetric) + "/" + Utility.formatTemperature(low, isMetric);
+//    }
+//
+//    /*
+//        This is ported from FetchWeatherTask --- but now we go straight from the cursor to the
+//        string.
+//     */
+//    private String convertCursorRowToUXFormat(Cursor cursor) {
+//
+//        String highAndLow = formatHighLows(
+//            cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP),
+//            cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP));
+//
+//        return Utility.formatDate(cursor.getLong(Utility.COL_WEATHER_DATE)) +
+//                " - " + cursor.getString(Utility.COL_WEATHER_DESC) +
+//                " - " + highAndLow;
+//    }
 
     /*
         Remember that these views are reused as needed.
@@ -89,10 +89,10 @@ public class ForecastAdapter extends CursorAdapter {
 
         // Read high temperature from cursor
         double high = cursor.getDouble(Utility.COL_WEATHER_MAX_TEMP);
-        viewHolder.highTempView.setText(Utility.formatTemperature(high, isMetric));
+        viewHolder.highTempView.setText(Utility.formatTemperature(context, high, isMetric));
 
         double low = cursor.getDouble(Utility.COL_WEATHER_MIN_TEMP);
-        viewHolder.lowTempView.setText(Utility.formatTemperature(low, isMetric));
+        viewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
     }
 
     @Override
