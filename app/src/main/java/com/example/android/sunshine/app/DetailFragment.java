@@ -161,7 +161,8 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         if (data.moveToFirst()) {
             boolean isMetric = Utility.isMetric(getActivity());
             String forecast = data.getString(COL_WEATHER_DESC);
-            String date = Utility.formatDate(data.getLong(COL_WEATHER_DATE));
+            String date = Utility.getFriendlyDayString(getContext(),
+                                                       data.getLong(COL_WEATHER_DATE));
             String low = Utility.formatTemperature(getActivity(),
                                                    data.getDouble(COL_WEATHER_MIN_TEMP),
                                                    isMetric);
@@ -175,6 +176,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
                                                    data.getFloat(COL_WEATHER_DEGREES));
             String pressure = getString(R.string.format_pressure,
                                         data.getFloat(COL_WEATHER_PRESSURE));
+            int iconResId = Utility.getArtResourceForWeatherCondition(data.getInt(COL_WEATHER_CONDITION_ID));
             forecastTextView.setText(forecast);
             dateTextView.setText(date);
             highTemTextView.setText(high);
@@ -182,6 +184,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
             humidityTextView.setText(humidity);
             windTextView.setText(wind);
             pressureTextView.setText(pressure);
+            icon.setImageResource(iconResId);
         }
     }
 

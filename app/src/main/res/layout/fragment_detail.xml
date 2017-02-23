@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/gral_cell_padding"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:layout_width="match_parent"
         android:orientation="vertical">
 
@@ -18,7 +18,8 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:orientation="vertical">
@@ -54,7 +55,7 @@
                     android:id="@+id/detail_icon"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:src="@drawable/ic_launcher"/>
+                    tools:src="@drawable/art_clear"/>
 
                 <TextView
                     tools:text="Sunday"
