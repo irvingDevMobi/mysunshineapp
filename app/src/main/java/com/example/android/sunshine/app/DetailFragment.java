@@ -25,14 +25,12 @@ import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link DetailFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class DetailFragment extends Fragment  implements LoaderManager.LoaderCallbacks<Cursor>{
 
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String STRING_URI = "param1";
-    public static final int LOADER_ID_DA = 112;
+    static final String DETAIL_URI = "d.URI";
+    public static final int DETAIL_LOADER_ID = 112;
 
     private static final String[] DETAIL_COLUMNS = {
             WeatherEntry.TABLE_NAME + "." + WeatherEntry._ID,
@@ -64,6 +62,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     public static final int COL_WEATHER_CONDITION_ID = 9;
 
     private ShareActionProvider mShareActionProvider;
+    private Uri mUri;
     private ImageView icon;
     private TextView forecastTextView;
     private TextView dateTextView;
@@ -72,25 +71,9 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     private TextView humidityTextView;
     private TextView windTextView;
     private TextView pressureTextView;
-    private String queryUri;
 
     public DetailFragment() {
         // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param queryUri string with specific uri to a value.
-     * @return A new instance of fragment DetailFragment.
-     */
-    public static DetailFragment newInstance(String queryUri) {
-        DetailFragment fragment = new DetailFragment();
-        Bundle args = new Bundle();
-        args.putString(STRING_URI, queryUri);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -98,7 +81,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         if (getArguments() != null) {
-            queryUri = getArguments().getString(STRING_URI);
+            mUri = getArguments().getParcelable(DETAIL_URI);
         }
     }
 
@@ -120,7 +103,7 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(LOADER_ID_DA, null, this);
+        getLoaderManager().initLoader(DETAIL_LOADER_ID, null, this);
     }
 
     @Override
@@ -152,8 +135,10 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        return new CursorLoader(getActivity(), Uri.parse(queryUri), DETAIL_COLUMNS, null,
-                                null, null);
+        if (mUri == null) {
+            return null;
+        }
+        return new CursorLoader(getActivity(), mUri, DETAIL_COLUMNS, null, null, null);
     }
 
     @Override
@@ -191,5 +176,15 @@ public class DetailFragment extends Fragment  implements LoaderManager.LoaderCal
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
+    }
+
+    void onLocationChanged(String newLocation) {
+        // replace the uri, since the location has changed
+        Uri uri = mUri;
+        if (null != uri) {
+            long date = WeatherContract.WeatherEntry.getDateFromUri(uri);
+            mUri = WeatherEntry.buildWeatherLocationWithDate(newLocation, date);
+            getLoaderManager().restartLoader(DETAIL_LOADER_ID, null, this);
+        }
     }
 }
